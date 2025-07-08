@@ -14,6 +14,8 @@ public class UsersAccounts {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @Column(name="name",nullable=false)
+    private String name;
     @Column(name="username", unique = true, nullable = false)
     private String username;
     @Column(name="password")
@@ -61,5 +63,13 @@ public class UsersAccounts {
 
     public void setAccessType(String accessType) {
         this.accessType = accessType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

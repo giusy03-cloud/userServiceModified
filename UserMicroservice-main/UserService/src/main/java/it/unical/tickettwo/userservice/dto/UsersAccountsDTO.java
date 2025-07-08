@@ -14,6 +14,9 @@ public class UsersAccountsDTO {
     private long id;
 
     @JsonProperty
+    private String name;
+
+    @JsonProperty
     private String username;
 
     @JsonProperty
@@ -22,8 +25,9 @@ public class UsersAccountsDTO {
     @JsonProperty
     private String accessType;
 
-    public UsersAccountsDTO(long id, String username, String role, String accessType) {
+    public UsersAccountsDTO(long id, String name, String username, String role, String accessType) {
         this.id = id;
+        this.name=name;
         this.username = username;
         this.role = role;
         this.accessType = accessType;

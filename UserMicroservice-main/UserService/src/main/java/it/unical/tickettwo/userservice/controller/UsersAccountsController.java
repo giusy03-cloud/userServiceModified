@@ -42,11 +42,41 @@ public class UsersAccountsController {
     }
 
 
+
+
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        usersAccountsService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteUser(@PathVariable Long id,
+                                             @RequestHeader("Authorization") String authHeader,
+                                             Authentication authentication) {
+        String token = authHeader.replace("Bearer ", "");
+        String username = authentication.getName();
+        UsersAccounts currentUser = usersAccountsService.getUserByUsername(username);
+
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utente non autenticato");
+        }
+
+        if (!"ORGANIZER".equals(currentUser.getRole())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Solo organizzatori possono eliminare utenti");
+        }
+
+        Optional<UsersAccounts> userToDeleteOpt = usersAccountsService.getUserById(id);
+        if (userToDeleteOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utente da eliminare non trovato");
+        }
+        UsersAccounts userToDelete = userToDeleteOpt.get();
+
+        if ("ORGANIZER".equals(userToDelete.getRole())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Non puoi eliminare un altro organizzatore");
+        }
+
+        usersAccountsService.deleteUser(id, token);  // Passo il token qui
+        return ResponseEntity.ok("Utente eliminato con successo");
     }
+
+
+
 
     @GetMapping("/username/{username}")
     public ResponseEntity<UsersAccounts> getUserByUsername(@PathVariable String username) {

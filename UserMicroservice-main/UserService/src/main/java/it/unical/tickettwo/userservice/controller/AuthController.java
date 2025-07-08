@@ -72,6 +72,7 @@ public class AuthController {
 
             UsersAccountsDTO userDTO = new UsersAccountsDTO(
                     storedUser.getId(),
+                    storedUser.getName(),
                     storedUser.getUsername(),
                     storedUser.getRole(),
                     storedUser.getAccessType()
@@ -127,6 +128,7 @@ public class AuthController {
         }
         UsersAccountsDTO dto = new UsersAccountsDTO(
                 user.getId(),
+                user.getName(),
                 user.getUsername(),
                 user.getRole(),
                 user.getAccessType()
