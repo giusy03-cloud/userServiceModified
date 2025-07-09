@@ -23,6 +23,7 @@ public class UsersAccountsService {
     private final String BOOKING_SERVICE_URL = "http://localhost:8083/api/bookings/user/";
     private final String REVIEW_SERVICE_URL = "http://localhost:8082/reviews/user/";
 
+    private static final String ORGANIZER_SECRET = "ORGANIZER2025";
 
     public List<UsersAccounts> getAllUsers() {
         return usersAccountsRepository.findAll();
@@ -32,13 +33,29 @@ public class UsersAccountsService {
         return usersAccountsRepository.findById(id);
     }
 
-    // PasswordEncoder passato come parametro per evitare il ciclo
+
     public UsersAccounts registerUser(UsersAccounts user, org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
+        // Verifica se il ruolo è ORGANIZER e controlla il PIN
+        if ("ORGANIZER".equalsIgnoreCase(user.getRole())) {
+            if (!ORGANIZER_SECRET.equals(user.getInvitationCode())) {
+                throw new IllegalArgumentException("PIN per organizzatore non valido");
+            }
+        }
+
+        // Stampa la password originale
         System.out.println("Password originale: " + user.getPassword());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Evita doppio encoding se la password è già codificata (opzionale ma utile in caso di update)
+        if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        // Stampa la password codificata
         System.out.println("Password codificata: " + user.getPassword());
+
         return usersAccountsRepository.save(user);
     }
+
 
 
     public void deleteUser(Long id, String token) {

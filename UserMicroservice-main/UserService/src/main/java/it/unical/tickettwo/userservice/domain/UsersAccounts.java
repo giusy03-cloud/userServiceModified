@@ -72,4 +72,15 @@ public class UsersAccounts {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Transient
+    private String invitationCode;
+
+    public String getInvitationCode() {
+        return invitationCode;
+    }
+
+    public void setInvitationCode(String invitationCode) {
+        this.invitationCode = invitationCode;
+    }
 }
